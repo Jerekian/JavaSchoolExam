@@ -14,8 +14,44 @@ public class PyramidBuilder {
      */
     public int[][] buildPyramid(List<Integer> inputNumbers) {
         // TODO : Implement your solution here
-        return new int[0][0];
+
+        int n = isPossibleBuildPyramid(inputNumbers.size());
+        if (inputNumbers.size() != n*(n+1)/2) throw new CannotBuildPyramidException();
+
+        return buildPyramid(inputNumbers, n);
+}
+
+    private int[][] buildPyramid(List<Integer> inputNumbers, int n){
+        int[][] pyramid = new int[n][2*n-1];
+        if(inputNumbers.contains(null)) throw new CannotBuildPyramidException();
+        inputNumbers.sort((o1, o2) -> o1-o2);
+
+        int numbersOnLine = 1, numberIndex = 0;
+        for(int i = 0; i < pyramid.length; i++){
+            for(int j = n-i-1, count = 0; count < numbersOnLine ; count++, j+=2){
+                Integer number = inputNumbers.get(numberIndex);
+                numberIndex++;
+                pyramid[i][j] = number;
+            }
+            numbersOnLine++;
+        }
+        return pyramid;
     }
 
+    private int isPossibleBuildPyramid(int size){
+        return (int)(Math.sqrt(1+8*size) - 1)/2;
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
