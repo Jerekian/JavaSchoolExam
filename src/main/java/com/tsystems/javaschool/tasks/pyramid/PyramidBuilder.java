@@ -51,15 +51,3 @@ public class PyramidBuilder {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
