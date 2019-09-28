@@ -15,8 +15,7 @@ public class Calculator {
      */
     public String evaluate(String statement) {
         // TODO: Implement the logic here
-
-        if(statement.isEmpty() || statement == null){
+        if(statement == null || statement.isEmpty()){
             return null;
         }else{
             return answerFormatting(getAnswer(conversionToReversePolishNotation(statement)));
@@ -31,10 +30,13 @@ public class Calculator {
 
             if(isNumeralOrDot(ch)){
                 sb.append(ch);
+            }else if(ch == ','){
+                return null;
             }else if(ch == '('){
                 sb.append(' ');
                 characterStack.push(ch);
             }else if(ch == ')'){
+                sb.append(' ');
                 if(!characterStack.isEmpty()){
                     char tempCh = characterStack.pop();
                     while(tempCh != '(' && !characterStack.isEmpty()){
@@ -45,16 +47,22 @@ public class Calculator {
                     if(tempCh != '(' && characterStack.isEmpty()) return null;
                 }else return null;
             }else if(isOperation(ch)){
+                sb.append(' ');
                 if(characterStack.isEmpty()){
                     characterStack.push(ch);
                 }else{
                     char tempCh = characterStack.pop();
 
-                    while (isFirstCharPrioritySecondChar(tempCh, ch) && !characterStack.isEmpty()){
-                        sb.append(' ');
+
+                    while (isFirstCharPrioritySecondChar(tempCh, ch)){
                         sb.append(tempCh);
-                        tempCh = characterStack.pop();
+                        sb.append(' ');
+                        if(!characterStack.isEmpty()){
+                            tempCh = characterStack.pop();
+                        }else break;
                     }
+
+                    if(!isFirstCharPrioritySecondChar(tempCh, ch)) characterStack.push(tempCh);
 
                     characterStack.push(ch);
                 }
@@ -73,6 +81,7 @@ public class Calculator {
     }
 
     private Double getAnswer(String reversePolishNotation){
+        if(reversePolishNotation == null) return null;
         Stack<Double> doublesStack = new Stack<>();
         StringBuilder sb = new StringBuilder();
 
@@ -80,9 +89,14 @@ public class Calculator {
             if(isNumeralOrDot(ch)){
                 sb.append(ch);
             }else if(ch == ' ' && sb.length() != 0){
-                doublesStack.push(Double.valueOf(sb.toString()));
-                sb = new StringBuilder();
+                try {
+                    doublesStack.push(Double.valueOf(sb.toString()));
+                    sb = new StringBuilder();
+                }catch (Throwable t){
+                    return null;
+                }
             }else if(isOperation(ch)){
+                if(doublesStack.size() < 2) return null;
                 Double result = calculate(doublesStack.pop(), doublesStack.pop(), ch);
                 if(result == null) return  null;
                 doublesStack.push(result);
@@ -112,6 +126,7 @@ public class Calculator {
     private boolean isFirstCharPrioritySecondChar(char first, char second){
         if(first == second) return false;
         if((first == '/') || (first == '*' && second != '/'))return true;
+        if(first == '-' && second == '+') return true;
         return false;
     }
 
@@ -120,7 +135,7 @@ public class Calculator {
             return null;
         if (value == value.intValue())
             return String.valueOf(value.intValue());
-        return null;
+        return String.valueOf(value);
     }
 
 }
