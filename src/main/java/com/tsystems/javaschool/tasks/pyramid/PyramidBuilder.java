@@ -18,19 +18,19 @@ public class PyramidBuilder {
 
         int n = isPossibleBuildPyramid(inputNumbers.size());
 
-        if (inputNumbers.size() != n*(n+1)/2) throw new CannotBuildPyramidException();
+        if (inputNumbers.size() != n * (n + 1) / 2) throw new CannotBuildPyramidException();
 
         return buildPyramid(inputNumbers, n);
-}
+    }
 
-    private int[][] buildPyramid(List<Integer> inputNumbers, int n){
-        int[][] pyramid = new int[n][2*n-1];
-        if(inputNumbers.contains(null)) throw new CannotBuildPyramidException();
+    private int[][] buildPyramid(List<Integer> inputNumbers, int n) {
+        int[][] pyramid = new int[n][2 * n - 1];
+        if (inputNumbers.contains(null)) throw new CannotBuildPyramidException();
         inputNumbers.sort(Comparator.comparingInt(o -> o));
 
         int numberIndex = 0;
-        for(int i = 0, numbersOnLine = 1; i < pyramid.length; i++, numbersOnLine++){
-            for(int j = n-i-1, count = 0; count < numbersOnLine ; count++, j+=2){
+        for (int i = 0, numbersOnLine = 1; i < pyramid.length; i++, numbersOnLine++) {
+            for (int j = n - i - 1, count = 0; count < numbersOnLine; count++, j += 2) {
                 Integer number = inputNumbers.get(numberIndex);
                 numberIndex++;
                 pyramid[i][j] = number;
@@ -39,7 +39,7 @@ public class PyramidBuilder {
         return pyramid;
     }
 
-    private int isPossibleBuildPyramid(int size){
+    private int isPossibleBuildPyramid(int size) {
         /*
         size = n*(n+1)/2;
         n^2 + n - 2*size = 0;
@@ -47,7 +47,7 @@ public class PyramidBuilder {
         n1 = sqrt(-1 + (1 + 8*size))/2
         n2 < 0;
          */
-        return (int)(Math.sqrt(1+8*size) - 1)/2;
+        return (int) (Math.sqrt(1 + 8 * size) - 1) / 2;
     }
 
 }

@@ -15,6 +15,25 @@ public class Subsequence {
     @SuppressWarnings("rawtypes")
     public boolean find(List x, List y) {
         // TODO: Implement the logic here
+
+        if (x == null || y == null) throw new IllegalArgumentException();
+
+        if (x.isEmpty()) return true;
+        else if (y.isEmpty()) return false;
+
+        if (x.size() > y.size()) return false;
+
+        for (int yIndex = 0, xIndex = 0; yIndex < y.size(); yIndex++) {
+
+            if (y.get(yIndex).equals(x.get(xIndex))) {
+                xIndex++;
+                if (xIndex == x.size()) return true;
+            }
+
+        }
+
         return false;
+
     }
+
 }
