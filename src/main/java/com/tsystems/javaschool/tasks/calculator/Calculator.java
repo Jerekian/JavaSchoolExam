@@ -23,24 +23,41 @@ public class Calculator {
         }
     }
 
-    private String conversionToReversePolishNotation(String statement){
+    private String conversionToReversePolishNotation(String statement) {
         Stack<Character> characterStack = new Stack<>();
         StringBuilder sb = new StringBuilder();
-        for(char ch: statement.toCharArray()){
+
+        for(char ch: statement.toCharArray()) {
+
             if(isNumeralOrDot(ch)){
                 sb.append(ch);
-            }else if(isOperation(ch) || ch == '('){
+            }else if(ch == '('){
                 sb.append(' ');
                 characterStack.push(ch);
             }else if(ch == ')'){
-                sb.append(' ');
-                char tempCh = characterStack.pop();
-                while(tempCh != '(' && !characterStack.isEmpty()){
-                    sb.append(tempCh);
-                    sb.append(' ');
-                    tempCh = characterStack.pop();
+                if(!characterStack.isEmpty()){
+                    char tempCh = characterStack.pop();
+                    while(tempCh != '(' && !characterStack.isEmpty()){
+                        sb.append(tempCh);
+                        sb.append(' ');
+                        tempCh = characterStack.pop();
+                    }
+                    if(tempCh != '(' && characterStack.isEmpty()) return null;
+                }else return null;
+            }else if(isOperation(ch)){
+                if(characterStack.isEmpty()){
+                    characterStack.push(ch);
+                }else{
+                    char tempCh = characterStack.pop();
+
+                    while (isFirstCharPrioritySecondChar(tempCh, ch) && !characterStack.isEmpty()){
+                        sb.append(' ');
+                        sb.append(tempCh);
+                        tempCh = characterStack.pop();
+                    }
+
+                    characterStack.push(ch);
                 }
-                if(characterStack.isEmpty()) return null;
             }
         }
 
@@ -51,14 +68,7 @@ public class Calculator {
             sb.append(' ');
             sb.append(tempCh);
         }while(!characterStack.isEmpty());
-        /*
-        char tempCh = characterStack.pop();
-        while(!characterStack.isEmpty()){
-            if(tempCh == '(') return null;
-            sb.append(tempCh);
-            sb.append(' ');
-            tempCh = characterStack.pop();
-        }*/
+
         return sb.toString();
     }
 
@@ -97,6 +107,12 @@ public class Calculator {
 
     private boolean isOperation(char ch){
         return ch == '+' || ch == '-' || ch == '*' || ch == '/';
+    }
+
+    private boolean isFirstCharPrioritySecondChar(char first, char second){
+        if(first == second) return false;
+        if((first == '/') || (first == '*' && second != '/'))return true;
+        return false;
     }
 
     private String answerFormatting(Double value){
